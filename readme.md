@@ -1,8 +1,8 @@
-# PortaPi
+# PortaNas
 
 # ** This is Work In Progress at the moment **
 
-PortaPi is a list of instructions to getting a Raspberry Pi set up so that it can be used as portable storage. It can also be used if you just want a simple file server too. A Pi Zero, 1 or 2 aren't going to set any speed / performance records. (My Pi Zero achieves 1.4MB/s on Wifi writing direct to a class 10 high performance SD card), however a 3 or 4 will be much better at achieving higher speeds. There are many factors that will affect the speed however which is beyond the scope of this document.
+PortaNas is a list of instructions to getting a Raspberry Pi set up so that it can be used as portable storage. It can also be used if you just want a simple file server too. A Pi Zero, 1 or 2 aren't going to set any speed / performance records. (My Pi Zero achieves 1.4MB/s on Wifi writing direct to a class 10 high performance SD card), however a 3 or 4 will be much better at achieving higher speeds. There are many factors that will affect the speed however which is beyond the scope of this document.
 
 
 ## Getting Started
