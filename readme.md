@@ -1,6 +1,6 @@
 # PortaNas
 
-# ** This is Work In Progress at the moment **
+**The instructions will enable the Pi to be accessed through SFTP and Samba, however the instructions for creating a wireless hotspot are not yet completed or tested**
 
 PortaNas is a list of instructions to getting a Raspberry Pi set up so that it can be used as portable storage. It can also be used if you just want a simple file server too. A Pi Zero, 1 or 2 aren't going to set any speed / performance records. (My Pi Zero achieves 1.4MB/s on Wifi writing direct to a class 10 high performance SD card), however a 3 or 4 will be much better at achieving higher speeds. There are many factors that will affect the speed however which is beyond the scope of this document.
 
@@ -18,7 +18,7 @@ These instructions are based on using the Lite version of Rasbian (for a headles
 
 4. [This page](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) details how to use the `raspi-config` tool and where to adjust the next options. 
 
-5. Change the password for user `Pi` and use a good password that isn't easily guessed but is memorable. If it helps, write it down somewhere safe - in an address book, a mobile phone contact etc. *It isn't good practice, but we are human after all!*  **This will be the administration account so please don't lose these details**. This option is found in the main menu under **Change user password**.
+5. Change the password for user `pi` and use a good password that isn't easily guessed but is memorable. If it helps, write it down somewhere safe - in an address book, a mobile phone contact etc. *It isn't good practice, but we are human after all!*  **This will be the administration account so please don't lose these details**. This option is found in the main menu under **Change user password**.
 
 6. Change the hostname to ``portanas``. This can be anything within the parameters of the hostname spec (noted within the `raspi-config` tool). This document however will make reference to this hostname - just substitute your own for it). This option is found under **Advanced Options > Hostname**.
 
@@ -26,9 +26,9 @@ These instructions are based on using the Lite version of Rasbian (for a headles
 
 8. Enable SSH (see [here](https://www.raspberrypi.org/documentation/remote-access/ssh/) for details on the `raspi-config` method)
 
-9. For a self contained system the SD card can be used as the usable storage space. For this set-up we will create a new partition that will be used for storage, by shrinking the Root partition to 8GiB and creating a new EXT4 partition in the remaining space. This can best be achieved through item 6 or 7 [here](https://elinux.org/RPi_Resize_Flash_Partitions#Manually_resizing_the_SD_card_on_Raspberry_Pi). *It is much easier to use Gparted on another system as this has a better visual representation of what is being done to avoid mistakes being made.*
+9. For a self contained system the SD card can be used as the usable storage space. For this set-up we will create a new partition that will be used for storage, by shrinking the Root partition to 8GiB and creating a new EXT4 partition in the remaining space. This can be achieved through item 6 or 7 [here](https://elinux.org/RPi_Resize_Flash_Partitions#Manually_resizing_the_SD_card_on_Raspberry_Pi). *It is much easier however to use Gparted on another system as this has a better visual representation of what is being done to avoid mistakes being made.*
 
-10. The usable size of the storage partition can be used by reducing the reserved blocks on it (these are mainly used by the system if it runs out of space to keep things working, however the system partition will have it's own reserved blocks). Reduce the reserved blocks on this new EXT4 partition to zero using:
+10. The usable size of the storage partition can be increased by reducing the reserved blocks on it (these are mainly used by the system if it runs out of space to keep things working, however the system partition will have it's own reserved blocks). Reduce the reserved blocks on this new EXT4 partition to zero using:
 
 	`tune2fs -m0 /DEVICEPARTITION` 
 
@@ -64,7 +64,7 @@ We can either continue this section with the Pi connected to the monitor and key
 
 We should have a working SSH config that will allow us to connect remotely from another system that has SSH installed (Windows users will need something like PuTTY; Linux and Mac users should have it installed by default)
 
-As we have set up the Pi with a memorable hostname, this can now be used by other systems to *easily* connect to it without knowing it's ip address (in practice this could be complicated). 
+As we have set up the Pi with a memorable hostname, this can now be used by other systems to *easily* connect to it without knowing it's IP address (in practice this could be complicated). 
 
 We would use `hostname.local` where hostname is the one set up earlier (`portanas.local` in our case). This all depends if a mDNS service is installed on your system (avahi in the case of Linux; Windows will need the bonjour service installed which can be extracted from the iTunes installer - just download iTunes, and instead of installing, use 7zip to open the iTunes installer, extract the item marked bonjour.msi and run that file. Newer versions of Windows 10 also requires some registry tweaking to allow it to use the bonjour service correctly. [Here](https://superuser.com/questions/1330027/how-to-enable-mdns-on-windows-10-build-17134) is a guide to adjust the registry).
 
@@ -72,13 +72,13 @@ To test if your system can use the `hostname.local` method, ensure the Pi is con
 
 `ping 192.168.1.1`
 	
-or whatever your router's ip address is (it could be `192.168.0.1` - consult with your router's documents to find this out as some manufacturers put the router on different subnets. You can also substitute the ping command with `ping google.com` or any other website which should only be successful if it goes through your router). Ensure the response is good before proceeding (and that you are not getting anything that says unreachable)
+or whatever your router's IP address is (it could be `192.168.0.1` - consult with your router's documents to find this out as some manufacturers put the router on different subnets. You can also substitute the ping command with `ping google.com` or any other website which should only be successful if it goes through your router). Ensure the response is good before proceeding (and that you are not getting anything that says unreachable)
 	
 Now on your system, open the command line and type in:
 	
 `ping portanas.local`
 	
-If you get anything that says unreachable, then the problem lies on your system and not the Pi. If resolving this is beyond your capabilities, then the ip address of the Pi can be found by using a network scanner app on your phone such as Fing which is available for both iOS and Android. This will be the way to find the ip address when there is no monitor attached (otherwise it would be trivial to find the ip address by asking the Pi for it directly)
+If you get anything that says unreachable, then the problem lies on your system and not the Pi. If resolving this is beyond your capabilities, then the IP address of the Pi can be found by using a network scanner app on your phone such as Fing which is available for both iOS and Android. This will be the way to find the IP address when there is no monitor attached (otherwise it would be trivial to find the IP address by asking the Pi for it directly)
 	
 In the command line, connect to the Pi over SSH using the following command:
 	
@@ -88,7 +88,7 @@ or if using PuTTY on Windows
 
 `putty.exe -ssh pi@portanas.local`
 	
-if you have the ip address instead, substitute the `portanas.local` above with the ip address you have obtained.
+if you have the IP address instead, substitute the `portanas.local` above with the IP address you have obtained.
 	
 Accept all the notifications that are generated, and you should then be left with a command prompt from the Pi which will look like the following:
 	
@@ -162,6 +162,12 @@ Test that the mount options work by issuing:
 
 There should be no feedback if the command was successful, however if it was unsuccessful, then an error will be displayed. It should be noted that if there is an error and the Pi is needing to be rebooted **do not reboot the Pi without first commenting out the line that was added in `/etc/fstab` (put a `#` at the begining of the line, then `CTRL+X` then `Y` then `Enter`) otherwise the Pi will boot into emergency mode. See [here](https://www.raspberrypi.org/forums/viewtopic.php?t=211349) on how to fix in this case.**. The `nofail` option can be added to options above (use a comma to add it to the fourth option in `/etc/fstab` for that line). This will allow the system to boot if the mount has a problem, however as the Storage partition resides on the same disk as the operating system, it really should flag if there is an issue to prevent further data loss.
 
+To verify that the mount was successful enter the following command which details how much space is free on the Pi:
+
+`df -h`
+
+There should be an entry which the last column (`Mounted on`) will be `/media/StorageSD` and the size should match what you are expecting.
+
 ## 4. Logging to RAM
 
 **THIS SECTION IS OPTIONAL, HOWEVER PLEASE READ AND DECIDE IF YOU WANT TO FOLLOW IT**
@@ -202,7 +208,7 @@ Following the onscreen text until control is returned to the prompt. The Pi need
 
 `sudo reboot`
 
-When the Pi has rebooted, check it has been successful by issuing the following:
+When the Pi has rebooted, check if the script has been successful by issuing the following:
 
 `df -h`
 
@@ -222,12 +228,189 @@ log2ram          40M  1.4M   38M   1% /var/log
 tmpfs            48M     0   48M   0% /run/user/1000
 ```
 
-## 5. Adding a lesser privileged user
+## 5. Installing automatic updates
 
-It is wise to add in another user that doesn't have administrative access to the whole system. Ideally every user that wants access to the system should have their own account, however this may become impractical if it is the occaisional family member that needs access to store or retrieve something from the storage system. You wouldn't want to give them the master key would you? 
+To improve the security of the Pi, it is wise to ensure that updates are done regularly. 
+
+As the system will be headless, and the only interaction will be to copy files, it may be tedious to SSH into it, type in a few commands, wait until they complete, then reboot and log out.
+
+Therefore, it would be wise to automate these tasks so that it is almost a fit and forget solution. We can install the unattended upgrades package to carry out this task. 
+
+On the command line, enter the following:
+
+`sudo apt-get install unattended-upgrades`
+
+This will install the package required. On Raspbian Buster, the package won't install the right updates as noted [here](https://raspberrypi.stackexchange.com/questions/38931/how-do-i-set-my-raspberry-pi-to-automatically-update-upgrade). We need to make an adjustment so that it pulls in all the security packages. We need to run the following command to fix it:
+
+```bash
+echo 'Unattended-Upgrade::Origins-Pattern {
+//      Fix missing Rasbian sources.
+        "origin=Debian,codename=${distro_codename},label=Debian";
+        "origin=Debian,codename=${distro_codename},label=Debian-Security";
+        "origin=Raspbian,codename=${distro_codename},label=Raspbian";
+        "origin=Raspberry Pi Foundation,codename=${distro_codename},label=Raspberry Pi Foundation";
+};' | sudo tee /etc/apt/apt.conf.d/51unattended-upgrades-raspbian
+```
+
+The above command adds additional sources for the unattended upgrades package to look at and install. There should be no feedback if the above was successful.
+
+It would be wise to reboot the Pi at this stage to ensure that the package is executed correctly:
+
+`sudo reboot`
+
+## 6. Adding a lesser privileged user
+
+It is also wise to add in another user that doesn't have administrative access to the whole system. Ideally every user that wants access to the system should have their own account, however this may become impractical if it is the occasional family member that needs access to store or retrieve something from the storage system. You wouldn't want to give them the master key would you? 
 
 Likewise you shouldn't use the highest privileged account as an everyday account - even God had a day off on the Sabbath! (it's also really bad from a security point of view to use the admin account for trivial tasks)
 
 This section will set up a general user that has no security privileges, however later on, additional steps will be detailed on adding extra users for a more permanent solution if multiple users are required.
+
+To add another user enter the following on the command line:
+
+`sudo adduser portanas`
+
+The Pi will now prompt you to enter a password for this account and some other details. Only the password is manditory.
+
+On non Debian based system - the `adduser` command is `useradd`. Both commands will work on Debian, but `adduser` does some extra magic behind the scenes and ensures that things will work correctly.
+
+Also the username we have given is `portanas`. Any username (within reason) can be used instead - here `portanas` is used as it is generic to the system, however `frank`, `cloe` or `majorhaxxor` are all equally valid.
+
+The user is added without any special privileges and cannot elevate their permissions such as the user `pi`. The user `portanas` is not a member of any group and therefore cannot access or change anything outside of their own `home` directory. We will however need to allow them access to the storage on the Pi through group permissions.
+
+We will add a group that will assist with the permissions of files that are stored in the storage folder. For a single user, it is not necessarily a problem, however with multiple users, we need to have a bit of sanity about files in shared folders.
+
+`sudo groupadd storage`
+
+We now need to add the users of the Pi to this group:
+
+`sudo usermod -a -G storage pi`
+
+`sudo usermod -a -G storage portanas`
+
+ensure you replace `portanas` above with whatever the username was that you chose earlier.
+
+Now both `pi` and `portanas` are within the `storage` group.
+
+We now need to adjust write and owner permissions of the `/media/StorageSD` folder so that both users are allowed to write to it. First we will change the owner of the folder as follows:
+
+`sudo chown pi:storage -R /media/StorageSD`
+
+This will now make the `StorageSD` folder owned by the user `pi` and the group `storage`. As both `pi` and `portanas` are part of the `storage` group, both users should now be able to access the folder, however we need to alter the permissions to ensure that this is the case. Note that the `-R` option means recursive, so it will go through all the subfolders altering the owner. If the folder is blank, this should be fine (as in the case of the remaining space on the SD card that we have set up above), but if you are following this guide with an external hard drive that has been used on another system and it already has files etc on it, it would be worth double checking that you are happy for the file owner and group to change. The command can be run without the `-R` option, however any sub-folders already in existance may no longer be accessible in this system.
+
+To change the file permissions we will issue the following command:
+
+`sudo chmod 2770 -R /media/StorageSD`
+
+Again if there are existing files on the storage folder, the `-R` option will change all the files and folders to `2770` permissions which may or may not be acceptable.
+
+Here `2---` means that newly created files, folders and subfolders will inherit the group ownership, meaning that other members of the group can access them. Without the `2---` in the permission, a file or folder could be created that no-one else could access or delete. This may in fact be what is required, however this system is designed as a portable accessible storage solution, and this can be changed if this behaviour is not desirable. 
+
+Permissions `770` gives the owner and group of the file/folder read, write and execute permissions, whilst anyone else (i.e someone that isn't the owner, or within the `storage` group) will have no permissions at all.
+
+## 7. Install Samba
+
+Samba is a package that allows Windows to natively talk to the Pi and access the remote storage as if it were a Windows machine. It is also useful on Linux too as some distributions show the Windows Network in the file manager and allow you to connect through it without having any technical knowledge of what IP address the Pi is located at, or what folder can be accessed.
+
+It should be noted at this point that the system can already be accessed through SCP or SFTP by virtue of having SSH working correctly and the storage folder correctly permissed.
+
+Install samba as follows:
+
+`sudo apt-get install samba`
+
+Accept all the defaults at this stage. We need to add the users on the Pi into Samba otherwise we will not be able to connect even though the users exist on the Pi. To do this we will issue the following:
+
+`sudo smbpasswd -a portanas`
+
+**It is important that you enter the same password as the user account for `portanas`**. This prevents credential mismatches as password changes can propogate through Samba to the user account on the Pi. This can be altered through the configuration files, however it is not dealt with here.
+
+Also we are not adding the user `pi` as a valid Samba user as that account is more privileged than the lesser account we have created.
+
+We now need to modify the Samba config file to allow the shared folder to be accessible.
+
+To do this we issue:
+
+`sudo nano /etc/samba/smb.conf`
+
+This will bring up the config file to edit. Within this file there will be a few things to change and add.
+
+We need to add our storage folder at the very end of the file as follows:
+
+```bash
+[StorageSD]
+	path = /media/StorageSD
+	read only = no
+	force create mode = 0660
+	force directory mode = 2770
+	force group = storage
+```
+
+we also need to comment out everything from:
+
+```bash
+[homes]
+	comment = Home Directories
+	...
+	...
+```
+
+up to our share definition we have just created above. To comment out the line, we add a `#` in front of the line.
+
+Without commenting out these sections, when browsing the network share, the user will be presented with folders that are not related to the share we have created. There is a folder named after their username which will link into their home directory on the Pi. As the Pi has been given 8GiB of storage for the whole system - it is possible that this space could be accidentally filled with files and deprive the system of space for updates and additional software. There are also folders for print drivers too which is not necessary.
+
+Save and exit the file (`CTRL + X` then `Y`, then `Enter`)
+
+We now need to re-load Samba so that it reads these changes by issing the following:
+
+`sudo service smbd restart`
+
+## 8. Accessing the shares
+
+There are two ways now that the shares can be accessed - through SFTP (not to be confused with FTPS) and through Samba. There are many differing ways in which the shares can be accessed depending on the app, system etc which is beyond the scope of this document, however some hints will be given to assist with getting the connection up and running.
+
+On a system that supports SFTP, you can just point it to the address `portanas.local` and the folder `/media` which will give you access to all shares available (if more are added later). This is assuming your system can resolve `portanas.local` to the IP address (iOS and Mac can; Linux depends on the distribution). If it can't, then point the app to the IP address of the Pi instead (a network probing app like Fing can help). There are a multitude of apps available, so it is just a case of having a look at the documents to see how the details are entered.
+
+In Gnome 3 for example, click on `Other Locations` in the file manager and enter the following into the `Connect to Server` section: `sftp:portanas.local/media`, click `Connect` then enter the user details of the user on the Pi (username `portanas` (or what ever was set up earlier) NOT `pi`)
+
+On a system that supports Windows Shares - the share may be automatically found by browsing the network. If not, the share can be found through the hostname alone preceeding it with two `\\`. In our case, this would be `\\portanas` 
+
+Some apps that access the Windows Share require the Windows shared folder name to be added at the end of the addres which in this case would be `StorageSD`.
+
+It should also be mentioned that Samba does not do SMB1 (the original insecure version) of Windows Sharing, and the minimum supported is SMB2. Ensure that your app is compatible with SMB2 as otherwise you will not be able to connect.
+
+## 9. Adding extra users
+
+Adding extra users is fairly straightforward and can be achieved through the following:
+
+1. Log into the Pi with the `pi` user account
+
+2. Enter the following command to create a new user:
+
+	`sudo adduser <username>`
+	
+	where `<username>` is the username that is required.
+	
+3. Add them to the `storage` group:
+	
+	`sudo usermod -a -G storage <username>`
+	
+4. Add them into Samba:
+	
+	`sudo smbpasswd -a <username>`
+	
+	and use the same password that was supplied when adding the user account
+	
+5. Restart the Samba service:
+
+	`sudo service smbd restart`
+	
+## 10. Turning the system into a truly portable system
+
+This section will be filled in when I have carried out and tested this myself, however the idea is that by using `hostapd` the Pi can be made into a hotspot that can be connected to through wifi directly. This would be useful if you are out and about and need some portable storage and are without a computer to reconfigure the system to connect to a different network. Think of it as a wireless harddrive.
+
+
+
+	
+
 
 
